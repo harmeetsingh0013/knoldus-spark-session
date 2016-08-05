@@ -1,10 +1,14 @@
 # Week 2 Assignment Solution
 
-// Initialization table from csv file
+##### Initialization table from csv file
+```
 spark.read.option("header", "true").csv("/home/harmeet/knoldus_spark_sessions/code/week2/Fire_Department_Calls_for_Service.csv").createOrReplaceTempView("fire_service")
+```
 
-//Initialie data frames from csv file
+##### Initialie data frames from csv file
+```
 val df = spark.read.option("header", "true").csv("/home/harmeet/knoldus_spark_sessions/code/week2/Fire_Department_Calls_for_Service.csv")
+```
 
 
 ##### Q1. How many different types of calls were made to the Fire Department ?
