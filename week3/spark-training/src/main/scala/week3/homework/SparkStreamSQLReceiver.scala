@@ -7,6 +7,8 @@ import org.apache.spark.streaming.receiver.Receiver
 
 class SparkStreamSQLReceiver(tableName: String) extends Receiver[User] (StorageLevel.MEMORY_AND_DISK_2) {
 
+  var connection:Connection = null;
+
   override def onStart(): Unit ={
     println("On start in custom receiver ")
     new Thread("Mysql Receiver") {
@@ -23,7 +25,7 @@ class SparkStreamSQLReceiver(tableName: String) extends Receiver[User] (StorageL
     val driver = "com.mysql.jdbc.Driver"
     val username = "root"
     val password = "root"
-    var connection:Connection = null;
+
     try {
       Class.forName(driver)
       connection = DriverManager.getConnection(url, username, password)
@@ -35,7 +37,9 @@ class SparkStreamSQLReceiver(tableName: String) extends Receiver[User] (StorageL
       }
     } catch {
       case e: Exception => e.printStackTrace
+    }finally {
+      connection.close
     }
-    connection.close
+    receive
   }
 }
