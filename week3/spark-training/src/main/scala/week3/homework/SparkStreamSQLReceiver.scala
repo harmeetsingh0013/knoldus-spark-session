@@ -8,6 +8,7 @@ import org.apache.spark.streaming.receiver.Receiver
 class SparkStreamSQLReceiver(tableName: String) extends Receiver[User] (StorageLevel.MEMORY_AND_DISK_2) {
 
   var connection:Connection = null;
+  var userId = 0;
 
   override def onStart(): Unit ={
     println("On start in custom receiver ")
@@ -21,7 +22,7 @@ class SparkStreamSQLReceiver(tableName: String) extends Receiver[User] (StorageL
   }
 
   private def receive: Unit = {
-    val url = "jdbc:mysql://localhost/spark_stream_receiver"
+    val url = "jdbc:mysql://localhost/spark_stream_receiver?useSSL=false"
     val driver = "com.mysql.jdbc.Driver"
     val username = "root"
     val password = "root"
@@ -30,9 +31,10 @@ class SparkStreamSQLReceiver(tableName: String) extends Receiver[User] (StorageL
       Class.forName(driver)
       connection = DriverManager.getConnection(url, username, password)
       val statement = connection.createStatement
-      val rs = statement.executeQuery("SELECT * FROM "+tableName)
+      val rs = statement.executeQuery("SELECT * FROM "+tableName+" WHERE id > "+userId)
       while (rs.next) {
         val user = User(rs.getInt("id"), rs.getString("uuid"), rs.getString("name"))
+        userId = user.id;
         store(user)
       }
     } catch {

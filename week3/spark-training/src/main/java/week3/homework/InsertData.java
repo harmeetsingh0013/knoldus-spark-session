@@ -1,4 +1,4 @@
-package week3.workshop;
+package week3.homework;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
